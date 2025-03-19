@@ -21,88 +21,129 @@ This project involves a **comprehensive analysis** of Netflix's **movies and TV 
 ### **1️⃣ Content Type Analysis**  
 **Question:** How many movies and TV shows are available on Netflix?  
 **Solution:**  
-```sql
+
 SELECT 
     type AS Content_Type, 
     COUNT(*) AS Total_Count 
 FROM netflix 
 GROUP BY type;
 
-Finding: Movies outnumber TV shows on Netflix.
+### **2️⃣ Most Common Ratings**  
+**Question:** Identify the most frequent ratings for movies and TV shows.  
+**Solution:**  
 
-
-### 2️⃣ Most Common Ratings
-Question: What are the most frequent ratings for movies and TV shows?
-Solution:
-
-sql
-Copy
-Edit
 SELECT 
-    type AS Content_Type, 
-    rating, 
-    COUNT(*) AS Rating_Count 
+    type AS TV_Category, rating, 
+    COUNT(*) AS Total_Count 
 FROM netflix 
-GROUP BY type, rating 
-ORDER BY Rating_Count DESC;
-Finding: TV Shows and Movies have different dominant ratings, indicating audience preferences.
+GROUP BY TV_Category, rating 
+ORDER BY Total_Count DESC;
 
-3️⃣ Top 5 Countries with the Most Content
-Question: Which countries contribute the most content to Netflix?
-Solution:
+### **3️⃣ Movies Released in a Specific Year**  
+**Question:** List all movies released in a given year (e.g., 2020).  
+**Solution:**  
 
-sql
-Copy
-Edit
 SELECT 
-    country, 
-    COUNT(*) AS Total_Content 
+    type, title, release_year 
+FROM netflix 
+WHERE type = 'Movie' AND release_year = 2020;
+
+### **4️⃣ Top 5 Countries with the Most Content**  
+**Question:** Identify which countries contribute the most content to Netflix.  
+**Solution:**  
+
+SELECT 
+    country, COUNT(show_id) AS Total_Content 
 FROM netflix 
 GROUP BY country 
 ORDER BY Total_Content DESC 
 LIMIT 5;
-Finding: The United States, India, and the UK have the highest number of Netflix titles.
 
-4️⃣ Longest Movie on Netflix
-Question: What is the longest movie available?
-Solution:
+### **5️⃣ Identifying the Longest Movie**  
+**Question:** Find the longest movie available on Netflix.  
+**Solution:**  
 
-sql
-Copy
-Edit
 SELECT * FROM netflix 
 WHERE type = 'Movie' 
 AND duration = (SELECT MAX(duration) FROM netflix);
-Finding: The longest movie has significant runtime, possibly a documentary or special edition film.
 
-5️⃣ TV Shows with More Than 5 Seasons
-Question: Which TV Shows have more than 5 seasons?
-Solution:
+### **6️⃣ Movies/TV Shows by a Specific Director**  
+**Question:** Find all movies or TV shows directed by 'Robert Vince'.  
+**Solution:**  
 
-sql
-Copy
-Edit
+SELECT * FROM netflix 
+WHERE director LIKE '%Robert Vince%';
+
+### **7️⃣ TV Shows with More Than 5 Seasons**  
+**Question:** List all TV Shows with more than 5 seasons.  
+**Solution:**  
+
 SELECT * FROM netflix 
 WHERE type = 'TV Show' 
-AND CAST(SPLIT_PART(duration, ' ', 1) AS INTEGER) > 5;
-Finding: Only a handful of TV Shows have longer seasons, indicating a preference for shorter series.
+AND duration >= '5 Season';
 
-6️⃣ Categorizing Content Based on Keywords
-Question: How many titles contain keywords like "kill" or "violence"?
-Solution:
+### **8️⃣ Content Count per Genre**  
+**Question:** Count the number of content items in each genre.  
+**Solution:**  
 
-sql
-Copy
-Edit
 SELECT 
-    CASE 
-        WHEN description ILIKE '%kill%' OR description ILIKE '%violence%' 
-        THEN 'Bad Content' 
-        ELSE 'Good Content' 
-    END AS Category, 
-    COUNT(*) AS Total_Content 
+    UNNEST(STRING_TO_ARRAY(listed_in, ',')) AS Genre, 
+    COUNT(show_id) AS Total_Content 
 FROM netflix 
+GROUP BY 1;
+
+### **9️⃣ Listing All Documentary Movies**  
+**Question:** Extract all movies that belong to the "Documentary" genre.  
+**Solution:**  
+
+WITH Genre_Count AS (
+    SELECT 
+        UNNEST(STRING_TO_ARRAY(listed_in, ',')) AS Genre, 
+        COUNT(show_id) AS Total_Content 
+    FROM netflix 
+    WHERE type = 'Movie' 
+    GROUP BY 1
+) 
+SELECT * FROM Genre_Count WHERE Genre = 'Documentaries';
+
+### **🔟 Identifying Content Without a Director**  
+**Question:** Find all Netflix content that does not list a director.  
+**Solution:**  
+
+SELECT * FROM netflix WHERE director IS NULL;
+
+### **1️⃣1️⃣ Top 10 Actors in Indian Movies**  
+**Question:** Identify the top 10 actors who have appeared in the most Indian movies.  
+**Solution:**  
+
+SELECT 
+    UNNEST(STRING_TO_ARRAY(casts, ',')) AS Actor, 
+    COUNT(*) AS Number_of_Movies_Appeared 
+FROM netflix 
+WHERE country = 'India' AND type = 'Movie' 
+GROUP BY Actor 
+ORDER BY Number_of_Movies_Appeared DESC 
+LIMIT 10;
+
+### **1️⃣2️⃣ Categorizing Content Based on Keywords**  
+**Question:** Categorize content based on the presence of keywords like 'kill' and 'violence'.  
+**Solution:**  
+
+WITH Content_Category AS (
+    SELECT 
+        *, 
+        CASE 
+            WHEN description ILIKE '%kill%' OR description ILIKE '%violence%' 
+            THEN 'Bad Content' 
+            ELSE 'Good Content' 
+        END AS Category 
+    FROM netflix
+) 
+SELECT Category, COUNT(*) AS Total_Content 
+FROM Content_Category 
 GROUP BY Category;
-Finding: A small percentage of content has violent themes, useful for parental control insights.
+
+
+
 
 
