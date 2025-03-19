@@ -173,7 +173,14 @@ WITH Content_Category AS (
 SELECT Category, COUNT(*) AS Total_Content 
 FROM Content_Category 
 GROUP BY Category;
+```
 
+
+Author
+👨‍💻 Aditya Ghewade
+📧 Email: [your-email@example.com]
+📌 LinkedIn: https://www.linkedin.com/in/aditya-ghewade-705665195/
+⭐ If you found this project useful, don't forget to give it a star! ⭐
 ```
 
 
