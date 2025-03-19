@@ -16,3 +16,14 @@ This project involves a **comprehensive analysis** of Netflix's **movies and TV 
 -- List and analyze content based on **release years, countries, and durations**.  
 -- Explore and categorize content based on **specific criteria and keywords**.  
 
+## Business Problems & Solutions  
+
+### **1️⃣ Content Type Analysis**  
+**Question:** How many movies and TV shows are available on Netflix?  
+**Solution:**  
+```sql
+SELECT 
+    type AS Content_Type, 
+    COUNT(*) AS Total_Count 
+FROM netflix 
+GROUP BY type;
