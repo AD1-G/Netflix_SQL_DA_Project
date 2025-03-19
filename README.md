@@ -27,3 +27,7 @@ SELECT
     COUNT(*) AS Total_Count 
 FROM netflix 
 GROUP BY type;
+
+Finding: Movies outnumber TV shows on Netflix.
+
+
