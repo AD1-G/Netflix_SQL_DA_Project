@@ -21,12 +21,13 @@ This project involves a **comprehensive analysis** of Netflix's **movies and TV 
 ### **1️⃣ Content Type Analysis**  
 **Question:** How many movies and TV shows are available on Netflix?  
 **Solution:**  
-
+''' sql
 SELECT 
     type AS Content_Type, 
     COUNT(*) AS Total_Count 
 FROM netflix 
 GROUP BY type;
+'''
 
 ### **2️⃣ Most Common Ratings**  
 **Question:** Identify the most frequent ratings for movies and TV shows.  
